@@ -10,6 +10,10 @@ class Product_base:
         print("name: ", self.name)
         print("price: ", self.price)
 
+    def return_dict(self):
+        return self.dict
+
+
 
 class Product_property4(Product_base):
     def __init__(self, st1, st2, st3, st4):
@@ -22,6 +26,8 @@ class Product_property4(Product_base):
         print("vendercode: ", self.vendercode)
 
 
+
+
 class Product_property5(Product_property4):
     def __init__(self, st1, st2, st3, st4, st5):
         Product_property4.__init__(self, st1, st2, st3, st4)
@@ -32,6 +38,8 @@ class Product_property5(Product_property4):
     def printInfo(self):
         Product_property4.printInfo(self)
         print("quantity: ", self.quantity)
+
+
 
 massiv_products = []
 
