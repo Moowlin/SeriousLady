@@ -56,12 +56,12 @@ else:
     lbl2 = Label(text="Введите данные о товарах:", fg="#eee", bg="#333", height=2, pady=-10)
     lbl2.grid(row=1, column=0, padx=10, pady=0, sticky="w")
 
-    #-------Добавим изображение
+'''    #-------Добавим изображение
     canvas = Canvas(root, height=60, width=55)
     img = PhotoImage(file = 'image.png')
     image = canvas.create_image(5, 10, anchor='nw',image=img)
-    canvas.grid(row=1, column=4, padx=5, pady=5, sticky="e")
+    canvas.grid(row=1, column=4, padx=5, pady=5, sticky="e")'''
 
-    do_message()
+do_message()
 
-    root.mainloop()
+root.mainloop()
