@@ -34,3 +34,35 @@ def import_to_csv(clmnq):
         wrinter = csv.DictWriter(file, fieldnames=colums_csv, delimiter=';')
         wrinter.writeheader()
         wrinter.writerows(products_csv)
+
+def check_field(massiv_entry):
+    result_checking = False
+    for i in range(len(massiv_entry)):
+        if massiv_entry[i].get() == '':
+            result_checking = False
+            break
+        else:
+            result_checking = True
+    return result_checking
+
+def creating_product(massiv_entry, clnmq):
+    if len(massiv_entry) == 3:
+        cl_id = massiv_entry[0]
+        cl_name = massiv_entry[1]
+        cl_price = massiv_entry[2]
+        create_product(clnmq, cl_id.get(), cl_name.get(), cl_price.get())
+
+    if len(massiv_entry) == 4:
+        cl_id = massiv_entry[0]
+        cl_name = massiv_entry[1]
+        cl_price = massiv_entry[2]
+        cl_vendercode = massiv_entry[3]
+        create_product(clnmq, cl_id.get(), cl_name.get(), cl_price.get(), cl_vendercode.get())
+
+    if len(massiv_entry) == 5:
+        cl_id = massiv_entry[0]
+        cl_name = massiv_entry[1]
+        cl_price = massiv_entry[2]
+        cl_vendercode = massiv_entry[3]
+        cl_quantity = massiv_entry[4]
+        create_product(clnmq, cl_id.get(), cl_name.get(), cl_price.get(), cl_vendercode.get(), cl_quantity.get())
