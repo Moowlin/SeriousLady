@@ -5,17 +5,37 @@ import re
 from TFS_funcs import *
 
 # ----------------------------------------------= Кнопка добавить =-----------------------------------------------------
-def add_to_massiv():
+def show_message():
     global clnmq
-    if check_field(massiv_entry) == False:
-        messagebox.showinfo("Добавление товара", "Данные о товаре не добавлены. Заполните Все поля")
-    else:
-        creating_product(massiv_entry, clnmq)
-        for i in range(len(massiv_entry)):
-            label = ttk.Label()
-            label.grid(row=5, column=i, sticky="w", padx=5, pady=40)
-            label["text"] = massiv_entry[i].get()  # получаем введенный текст
-        messagebox.showinfo("Добавление товара", "Данные о товаре добавлены")
+
+    if len(massiv_entry) == 3:
+        cl_id = massiv_entry[0]
+        cl_name = massiv_entry[1]
+        cl_price = massiv_entry[2]
+        create_product(clnmq, cl_id.get(), cl_name.get(), cl_price.get())
+
+    if len(massiv_entry) == 4:
+        cl_id = massiv_entry[0]
+        cl_name = massiv_entry[1]
+        cl_price = massiv_entry[2]
+        cl_vendercode = massiv_entry[3]
+        create_product(clnmq, cl_id.get(), cl_name.get(), cl_price.get(), cl_vendercode.get())
+
+    if len(massiv_entry) == 5:
+        cl_id = massiv_entry[0]
+        cl_name = massiv_entry[1]
+        cl_price = massiv_entry[2]
+        cl_vendercode = massiv_entry[3]
+        cl_quantity = massiv_entry[4]
+        create_product(clnmq, cl_id.get(), cl_name.get(), cl_price.get(), cl_vendercode.get(), cl_quantity.get())
+
+
+    for i in range(len(massiv_entry)):
+        label = ttk.Label()
+        label.grid(row=5, column=i, sticky="w", padx=5, pady=40)
+        label["text"] = massiv_entry[i].get()  # получаем введенный текст
+
+    messagebox.showinfo("Добавление товара", "Данные о товаре добавлены")
 
 # ------------------------------------------= Функции кнопки Очистить =-------------------------------------------------
 def clear():
@@ -30,7 +50,7 @@ def import_to_file():
 # -------------------------------------= Функции валидации полей ввода =------------------------------------------------
 def is_valid1(newval):
     result = re.match("[3-5]$", newval) is not None #3-5
-    # ------- Вывод ошибки
+    # -------Вывод ошибки
     if not result:
         errmsg.set("Количество столбцов должно быть от 3 до 5")
     else:
@@ -52,7 +72,9 @@ def is_valid_Vendercode(newval):
 def is_valid_Quantity(newval):
     return re.match("\d{0,3}$", newval) is not None #0-999
 
+
 # ----------------------------------= Вывод столбцов в графическом интерфейсе =--------------------------------------
+massiv_entry = []
 
 def do_message(clnmq, root):
     name_columns = ['Id', 'Name', 'Price', 'Vendercode', 'Quantity']
@@ -89,7 +111,7 @@ def do_message(clnmq, root):
         textentry.grid(row=3, column=i, padx=3)
 
 # -----------------------------------------------= Кнопка Добавить =----------------------------------------------------
-        add_button = Button(text="Добавить", command=add_to_massiv, fg="#eee", bg="#333", height=1, width=16)
+        add_button = Button(text="Добавить", command=show_message, fg="#eee", bg="#333", height=1, width=16)
         add_button.grid(row=4, column=0, sticky="e", padx=5, pady=40)
 
 # -----------------------------------------------= Кнопка Очистить =----------------------------------------------------
@@ -109,7 +131,6 @@ def do_message(clnmq, root):
 #                                   |__|  |__| /__/     \__\ |__| |__| \__|
 #
 # ----------------------------= Нажатие на кнопку открывает новое окно с таблицей =-------------------------------------
-massiv_entry = []
 clnmq = None
 def click_button():
     global clnmq
