@@ -1,5 +1,5 @@
-__pycache__/
-backup/
+__pycache__/*
+backup/*
 products.csv
 TFS-6.SN - Copy.py
 TFS-6.SN.py
