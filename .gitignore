@@ -1,7 +1,7 @@
-/__pycache__
-/backup
-/products.csv
-/TFS-6.SN - Copy.py
-/TFS-6.SN.py
-/TFS-10.NO.py
-/TFS-11.NO.py
+__pycache__/
+backup/
+products.csv
+TFS-6.SN - Copy.py
+TFS-6.SN.py
+TFS-10.NO.py
+TFS-11.NO.py
