@@ -3,103 +3,161 @@ from tkinter import messagebox
 from tkinter import ttk
 import re
 from TFS_funcs import *
+from tkinter import filedialog
 
 # ----------------------------------------------= Кнопка добавить =-----------------------------------------------------
 def add_to_massiv():
+    global massiv_products
     global clnmq
     if check_field(massiv_entry) == False:
-        messagebox.showinfo("Добавление товара", "Данные о товаре не добавлены. Заполните Все поля")
+        messagebox.showinfo("Добавление товара", "Данные о товаре не добавлены. Заполните все поля")
     else:
         creating_product(massiv_entry, clnmq)
-        for i in range(len(massiv_entry)):
-            label = ttk.Label()
-            label.grid(row=5, column=i, sticky="w", padx=5, pady=40)
-            label["text"] = massiv_entry[i].get()  # получаем введенный текст
+        massiv_products = return_massiv()
+        print(massiv_products)
+        #for i in range(len(massiv_entry)):
+        #    label = ttk.Label()
+        #    label.grid(row=5, column=i, sticky="w", padx=5, pady=40)
+        #    label["text"] = massiv_entry[i].get()  # получаем введенный текст
         messagebox.showinfo("Добавление товара", "Данные о товаре добавлены")
 
-# ------------------------------------------= Функции кнопки Очистить =-------------------------------------------------
+# ------------------------------------------= Кнопка Очистить =---------------------------------------------------------
 def clear():
     for i in range(len(massiv_entry)):
         massiv_entry[i].delete(0, END)
 
-# ---------------------------------------= Функции кнопки вывод в файл =------------------------------------------------
+# ----------------------------------------= Кнопка Вывод в файл =-------------------------------------------------------
 def import_to_file():
+    global massiv_products
     global clnmq
-    import_to_csv(clnmq)
+    if len(massiv_products) == 0:
+        messagebox.showinfo("Ошибка", "Нет данных для вывода в файл")
+    else:
+        try:
+            filepath = filedialog.asksaveasfilename()
+            if '.' in filepath:
+                raise Exception("Имя файла не должно содержать точку")
+        except Exception as e:
+            messagebox.showinfo("Ошибка", e)
+        else:
+            if filepath != "":
+                print(type(filepath))
+                print(filepath)
+                import_to_csv(clnmq, filepath)
 
 # -------------------------------------= Функции валидации полей ввода =------------------------------------------------
-def is_valid1(newval):
-    result = re.match("[3-5]$", newval) is not None #3-5
-    # ------- Вывод ошибки
-    if not result:
-        errmsg.set("Количество столбцов должно быть от 3 до 5")
-    else:
-        errmsg.set("")
-    return result
-
 def is_valid_Id(newval):
-    return re.match("\d{0,}$", newval) is not None  #регулярное выражение от 0 до бесконечности
+    return re.match("\d{0,}$", newval) is not None  # регулярное выражение от 0 до бесконечности
 
 def is_valid_Name(newval):
-    return re.match("[a-zA-Zа-яА-Я\s]{0,30}$", newval) is not None #только буквы и пробелы 0-30
+    return re.match("[a-zA-Zа-яА-Я\s]{0,30}$", newval) is not None  # только буквы и пробелы 0-30
 
 def is_valid_Price(newval):
-    return re.match("[0-9.]{0,10}$", newval) is not None #10 символов, цифры и точки
+    return re.match("[0-9.]{0,10}$", newval) is not None  # 10 символов, цифры и точки
 
 def is_valid_Vendercode(newval):
-    return re.match("\d{0,7}$", newval) is not None #0-9999999
+    return re.match("\d{0,7}$", newval) is not None  # 0-9999999
 
 def is_valid_Quantity(newval):
-    return re.match("\d{0,3}$", newval) is not None #0-999
+    return re.match("\d{0,3}$", newval) is not None  # 0-999
 
-# ----------------------------------= Вывод столбцов в графическом интерфейсе =--------------------------------------
-
-def do_message(clnmq, root):
+# ---------------------------------------= Поля ввода данных товара =---------------------------------------------------
+def create_fields_in_gui(clnmq, root):
     name_columns = ['Id', 'Name', 'Price', 'Vendercode', 'Quantity']
-
     for i in range(clnmq):
         name_st = name_columns[i]
         lbl = Label(text=name_st)
         lbl.grid(row=2, column=i, pady=10)
         message_nimi = StringVar()
-
+        # Валидация полей:
         if i == 0:
-            # ----Pегистрируем функцию, которая производит валидацию со значением "%P"
+            # Pегистрируем функцию, которая производит валидацию со значением "%P"
             check = (root.register(is_valid_Id), "%P")
-            # ----Свяжем текст с переменной message_nimi
+            # Свяжем текст с переменной message_nimi
             textentry = ttk.Entry(textvariable=message_nimi, width=25, validate="key", validatecommand=check)
-
         if i == 1:
             check = (root.register(is_valid_Name), "%P")
             textentry = ttk.Entry(textvariable=message_nimi, width=25, validate="key", validatecommand=check)
-
         if i == 2:
             check = (root.register(is_valid_Price), "%P")
             textentry = ttk.Entry(textvariable=message_nimi, width=25, validate="key", validatecommand=check)
-
         if i == 3:
             check = (root.register(is_valid_Vendercode), "%P")
             textentry = ttk.Entry(textvariable=message_nimi, width=25, validate="key", validatecommand=check)
-
         if i == 4:
             check = (root.register(is_valid_Quantity), "%P")
             textentry = ttk.Entry(textvariable=message_nimi, width=25, validate="key", validatecommand=check)
+        massiv_entry.append(textentry)              # Создение массива с содержимым полей
+        textentry.grid(row=3, column=i, padx=3)     # Отображение полей ввода на окне
 
-        massiv_entry.append(textentry)
-        textentry.grid(row=3, column=i, padx=3)
+        # Кнопка Добавить:
+        add_button = Button(text="Добавить", command=add_to_massiv, fg="#eee", bg="#333", height=1, width=20)
+        add_button.grid(row=4, column=0, padx=5, pady=40)
 
-# -----------------------------------------------= Кнопка Добавить =----------------------------------------------------
-        add_button = Button(text="Добавить", command=add_to_massiv, fg="#eee", bg="#333", height=1, width=16)
-        add_button.grid(row=4, column=0, sticky="e", padx=5, pady=40)
+        # Кнопка Очистить:
+        clear_button = Button(text="Очистить", command=clear, fg="#eee", bg="#333", height=1, width=20)
+        clear_button.grid(row=4, column=1, padx=5, pady=40)
 
-# -----------------------------------------------= Кнопка Очистить =----------------------------------------------------
-        clear_button = Button(text="Очистить", command=clear, fg="#eee", bg="#333", height=1, width=16)
-        clear_button.grid(row=4, column=1, sticky="w", padx=5, pady=40)
+        # Кнопка Вывод в файл:
+        import_button = Button(text="Вывод в файл", command=import_to_file, fg="#eee", bg="#333", height=1, width=20)
+        import_button.grid(row=4, column=2, padx=5, pady=40)
 
-# ---------------------------------------------= Кнопка Вывод в файл =--------------------------------------------------
-        import_button = Button(text="Вывод в файл", command=import_to_file, fg="#eee", bg="#333", height=1, width=16)
-        import_button.grid(row=5, column=0, sticky="e", padx=5, pady=20)
+        # Кнопка Закрыть окно:
+        close_button = Button(root, text='Закрыть окно', command=root.destroy, fg="#eee", bg="#333", height=1, width=20)
+        close_button.grid(row=4, column=3, padx=5, pady=40)
 
+# -------------------------------------= Окно заполнения данными новой таблицы =----------------------------------------
+def create_new_table():
+    global clmns_quantity
+    global quantity
+    global window
+    global clnmq
+    if (clmns_quantity.get()).isdigit() == False:
+        messagebox.showinfo("Ошибка", "Введите цифры")
+    elif check_quantity(clmns_quantity.get()) == False:
+        messagebox.showinfo("Ошибка", "Количество столбцов должно быть от 3 до 5")
+    else:
+        clnmq = int(quantity.get())         # получаем кол-во столбцов
+        window.destroy()                    # закрытие первого окна
+        root = Tk()                         # создаем новое окно
+        root.title("Таблица товаров")       # заголовок
+        root.geometry("830x300+250+100")
+        #root.maxsize(900, 1000)
+        #root.minsize(830, 500)
+        lbl2 = Label(text="Введите данные о товарах", fg="#eee", bg="#333", height=2)
+        lbl2.grid(row=0, column=0, padx=5, pady=0, sticky="w")
+        # Изображение:
+        canvas = Canvas(root, height=60, width=55)
+        img = PhotoImage(file='image.png')
+        image = canvas.create_image(5, 10, anchor='nw', image=img)
+        canvas.grid(row=0, column=4, padx=5, pady=5, sticky="e")
+        create_fields_in_gui(clnmq, root)
+        root.mainloop()
+
+# -----------------------------= Создание новой таблицы. Окно запроса количества столбцов =-----------------------------
+def new_table():
+    global quantity
+    global clmns_quantity
+    global window
+    global root
+    root.destroy()
+    window = Tk()
+    window.title("Основное окно")
+    window.geometry("300x200+500+200")
+    lbl_choice = Label(text="Введите количество необходимых столбцов", pady=10)
+    lbl_choice.pack()
+    lbl_choice2 = Label(text="(Id, Name, Price, Vendercode, Quantity):")
+    lbl_choice2.pack()
+    quantity = StringVar()
+    clmns_quantity = ttk.Entry(textvariable=quantity, width=20)  # , validate="key", validatecommand=check)
+    clmns_quantity.pack(pady=10)
+    create_button = Button(text="Создать", fg="#eee", bg="#333", height=1, width=16, pady=-10, command=create_new_table)
+    create_button.pack()
+    window.mainloop()
+
+# ----------------------------------------= ФУНКЦИЯ ЗАГЛУШКА!!!!! =-----------------------------------------------------
+def pizda():
+    messagebox.showinfo("Заглушка", "Ну пиздец! Еще работать и работать =(")
 # ----------------------------------------------------------------------------------------------------------------------
 #                                   .___  ___.      ___       __  .__   __.
 #                                   |   \/   |     /   \     |  | |  \ |  |
@@ -107,56 +165,21 @@ def do_message(clnmq, root):
 #                                   |  |\/|  |   /  /_\  \   |  | |  . `  |
 #                                   |  |  |  |  /  _____  \  |  | |  |\   |
 #                                   |__|  |__| /__/     \__\ |__| |__| \__|
-#
-# ----------------------------= Нажатие на кнопку открывает новое окно с таблицей =-------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+massiv_products = []
 massiv_entry = []
 clnmq = None
-def click_button():
-    global clnmq
-# -------------------------------------------= Запрос кол-ва столбцов =-------------------------------------------------
-    clnmq = int(quantity.get())
-    window.destroy() #закрытие первого окна
-# -----------------------------------------------= Создание окна =------------------------------------------------------
-    root = Tk()
-    root.title("Таблица товаров")  # заголовок
-    root.geometry("830x500+250+100")
-    root.maxsize(900,1000)
-    root.minsize(830,500)
-    lbl2 = Label(text="Введите данные о товарах:", fg="#eee", bg="#333", height=2, pady=-10)
-    lbl2.grid(row=1, column=0, padx=10, pady=0, sticky="w")
-
-# ------------------------------------------------= Изображение =-------------------------------------------------------
-    canvas = Canvas(root, height=60, width=55)
-    img = PhotoImage(file='image.png')
-    image = canvas.create_image(5, 10, anchor='nw', image=img)
-    canvas.grid(row=1, column=4, padx=5, pady=5, sticky="e")
-
-# ----------------------------------------------= Старт программы =-----------------------------------------------------
-    do_message(clnmq, root)
-    root.mainloop()
-
-# -----------------------------= Создание первого окна с запросом количества столбцов =---------------------------------
-window = Tk()
-window.title("Основное окно")
-window.geometry("300x200+500+200")
- 
-lbl_choice = Label(text="Введите количество необходимых столбцов", pady=10)
-lbl_choice.pack()
-lbl_choice2 = Label(text="(Id, Name, Price, Vendercode, Quantity):")
-lbl_choice2.pack()
-
-# ----------------------------------= Окно ввода количества столбцов с валидацией =-------------------------------------
-check = (window.register(is_valid1), "%P") 
-errmsg = StringVar()
-quantity = StringVar()
-clmns_quantity = ttk.Entry(textvariable=quantity, width=20, validate="key", validatecommand=check)
-clmns_quantity.pack(pady=10)
-
-# ----------------------------------------= Вывод ошибки при валидации =------------------------------------------------
-error_label = ttk.Label(foreground="red", textvariable=errmsg, wraplength=250)
-error_label.pack(padx=5, pady=5)
-
-button1 = Button(text="Создать", fg="#eee", bg="#333", height=1, width=16, pady=-10, command=click_button)
-button1.pack()
-
-window.mainloop()
+clmns_quantity = None
+quantity = None
+window = None
+# -----------------------= Стартовое окно с запросом Новой или Существующей таблицы =-----------------------------------
+root = Tk()
+root.title("Работа с таблицами")
+root.geometry("300x200+500+200")
+lbl_choice = Label(text="С какой таблицей вы хотите работать?", pady=10)
+lbl_choice.pack(pady=10)
+new_table = Button(text="Создать новую таблицу", fg="#eee", bg="#333", height=1, width=25, pady=5, command=new_table)
+new_table.pack()
+edit_table = Button(text="Загрузить существующую таблицу", fg="#eee", bg="#333", height=1, width=30, pady=5, command=pizda)
+edit_table.pack(pady=10)
+root.mainloop()

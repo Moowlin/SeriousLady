@@ -4,6 +4,10 @@ import csv
 massiv_products = []
 product = None
 
+def return_massiv():
+    global massiv_products
+    return massiv_products
+
 def create_massiv_products(product):
     global massiv_products
     massiv_products.append(product)
@@ -20,12 +24,12 @@ def create_product(clmnq, *data):
         product = Product_property5(data[0], data[1], data[2], data[3], data[4])
         create_massiv_products(product)
 
-def import_to_csv(clmnq):
+def import_to_csv(clmnq, filepath):
     products_csv = []
     for i in range(len(massiv_products)):
         products_csv.append(massiv_products[i].return_dict())
         print()
-    file_name = "products.csv"
+    file_name = filepath + ".csv"
     name_columns = ['id', 'name', 'price', 'vendercode', 'quantity']
     colums_csv = []
     for i in range(clmnq):
@@ -66,3 +70,11 @@ def creating_product(massiv_entry, clnmq):
         cl_vendercode = massiv_entry[3]
         cl_quantity = massiv_entry[4]
         create_product(clnmq, cl_id.get(), cl_name.get(), cl_price.get(), cl_vendercode.get(), cl_quantity.get())
+
+
+def check_quantity(clmns_quantity):
+    if int(clmns_quantity) not in (3, 4, 5):
+            result = False
+    else:
+        result = True
+    return result
